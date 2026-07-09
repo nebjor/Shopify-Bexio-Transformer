@@ -1,0 +1,5 @@
+Order,Transaction ID,Kind,Processed at,Amount,Currency,Status,Gateway,Card Type
+#1001,tx_1001,sale,2026-03-14 09:12:33 +0100,71.95,CHF,success,shopify_payments,visa
+#1002,tx_1002,sale,2026-03-15 14:02:00 +0100,36.90,CHF,success,shopify_payments,mastercard
+#1003,tx_1003,sale,2026-03-16 10:00:00 +0100,6.00,CHF,success,shopify_payments,visa
+#1003,tx_1003r,refund,2026-03-18 11:00:00 +0100,6.00,CHF,success,shopify_payments,visa

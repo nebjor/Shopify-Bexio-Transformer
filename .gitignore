@@ -1,0 +1,12 @@
+# local config with your real account/VAT codes
+config.yaml
+
+# real store data — never commit
+input/*.csv
+output/*.csv
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store

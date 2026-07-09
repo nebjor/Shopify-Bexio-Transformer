@@ -1,0 +1,6 @@
+Handle,Title,Body (HTML),Vendor,Type,Tags,Published,Option1 Name,Option1 Value,Option2 Name,Option2 Value,Variant SKU,Variant Grams,Variant Price,Variant Compare At Price,Variant Taxable,Variant Barcode,Cost per item,Image Src,Status
+classic-tee,Classic Tee,"<p>Soft <b>cotton</b> tee.</p>",Acme,Apparel,"summer,cotton",true,Color,Red,Size,S,TEE-RED-S,180,29.90,39.90,true,7612345000011,12.50,https://cdn.example/red-s.jpg,active
+classic-tee,,,,,,,Color,Red,Size,M,TEE-RED-M,190,29.90,39.90,true,7612345000028,12.50,,active
+classic-tee,,,,,,,Color,Blue,Size,S,TEE-BLU-S,180,29.90,39.90,true,7612345000035,12.50,,active
+classic-tee,,,,,,,,,,,,,,,,,,https://cdn.example/blue-s.jpg,active
+sticker-pack,Sticker Pack,"<p>Vinyl stickers, set of 5.</p>",Acme,Accessories,fun,true,Title,Default Title,,,STK-PACK,20,6.00,,false,7612345000042,1.20,https://cdn.example/stickers.jpg,active
