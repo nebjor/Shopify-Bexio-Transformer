@@ -1,10 +1,12 @@
-# Shopify → Bexio Transformer (V1)
+# Shopify → Bexio Transformer
 
-Turns raw **Shopify CSV exports** into **Bexio import-ready CSV files** — products,
-invoices (from orders) and payments — with no third-party app. Written in Python.
+A small Python command-line tool that converts **Shopify CSV exports** into
+**Bexio import CSV files** (products, invoices and payments), so a shop can move
+its data into Bexio without a paid third-party app.
 
-This is V1 of the project: export → transform → import by hand. The column
-mapping built here is the same logic a future V2 Shopify app would reuse.
+> **Status: proof of concept.** This is an offline CSV converter, not a live
+> integration. It does not talk to the Shopify or Bexio APIs. You export from
+> Shopify, run the script, and import the resulting files in Bexio by hand.
 
 ---
 
@@ -18,68 +20,69 @@ mapping built here is the same logic a future V2 Shopify app would reuse.
 
 - One Bexio **item per Shopify variant** (SKU, name incl. options, price, cost, VAT).
 - One Bexio **invoice per order**, with each line item + shipping as positions
-  (parent-row / child-row layout that Bexio importers expect).
+  (parent-row / child-row layout).
 - One **payment row per transaction**; refunds come through as negative amounts.
 
 ---
 
 ## Setup (one time)
 
+Requires Python 3.10+.
+
 ```bash
-cd shopify_bexio_transformer
+git clone https://github.com/nebjor/Shopify-Bexio-Transformer.git
+cd Shopify-Bexio-Transformer
 pip install -r requirements.txt
-copy config.example.yaml config.yaml     # Windows  (cp on macOS/Linux)
+cp config.example.yaml config.yaml     # Windows: copy config.example.yaml config.yaml
 ```
 
 Then open **`config.yaml`** and confirm the accounting values against **your**
-Bexio chart of accounts and VAT codes — these are the only things you must get
-right:
+Bexio chart of accounts and VAT codes:
 
-- `income_account` / `shipping_account` – e.g. `3200`
-- `vat_code_standard` – e.g. `UN81` (8.1 %); `vat_code_exempt` – e.g. `UEX`
-- `payment_account` – the bank/clearing account payments land in
+- `income_account` / `shipping_account`, e.g. `3200`
+- `vat_code_standard`, e.g. `UN81` (8.1 %); `vat_code_exempt`, e.g. `UEX`
+- `payment_account`: the bank/clearing account payments land in
 
-## Each time you want to migrate data
+Without a `config.yaml` the built-in defaults (the values in
+`config.example.yaml`) are used.
+
+## Usage
 
 1. In Shopify, export:
    - **Products** → Export → CSV
-   - **Orders** → Export → *include transaction/line-item data*
-   - **Orders** → *Export transaction histories* (optional but recommended)
-   - **Settings → Payments → Payouts → Export** (optional)
-2. Drop those CSVs into the **`input/`** folder (filenames don't have to match —
-   the tool auto-detects each export by its columns).
+   - **Orders** → Export (include line items)
+   - **Orders** → *Export transaction histories* (optional, recommended)
+2. Drop those CSVs into **`input/`**. Filenames don't matter; each export is
+   auto-detected by its columns.
 3. Run:
    ```bash
-   python run.py
+   python run.py                       # or: python run.py -c path/to/config.yaml
    ```
-4. Review the files written to **`output/`**, then import each one in Bexio.
-
-Run `python run.py -c path/to/other-config.yaml` to use an alternate config.
+4. Review the files in **`output/`**, then import each one in Bexio.
 
 ---
 
-## Verify it works
+## Try it with sample data
 
-Bundled synthetic exports live in `samples/`. To try the whole pipeline:
+Synthetic exports live in `samples/`:
 
 ```bash
-python tests/test_transform.py     # runs correctness checks (should print "All tests passed.")
+python tests/test_transform.py     # prints "All tests passed."
 ```
 
-Or copy `samples/*.csv` into `input/` and run `python run.py` to see real output.
+Or copy `samples/*.csv` into `input/` and run `python run.py`.
 
 ---
 
 ## Project layout
 
 ```
-shopify_bexio_transformer/
 ├─ run.py                 # entry point:  python run.py
 ├─ config.example.yaml    # copy to config.yaml and edit
-├─ input/                 # you drop Shopify exports here
-├─ output/                # Bexio-ready CSVs land here
+├─ input/                 # drop Shopify exports here (git-ignored)
+├─ output/                # Bexio CSVs land here (git-ignored)
 ├─ samples/               # synthetic exports for testing
-├─ src/shopify_bexio/     # the transformer
+├─ src/shopify_bexio/
 │  ├─ cli.py              # orchestration
 │  ├─ config.py           # config + defaults
 │  ├─ readers.py          # find & load Shopify CSVs (auto-detect)
@@ -92,13 +95,25 @@ shopify_bexio_transformer/
 
 ---
 
-## Notes & limits
+## Limitations
 
-- **Confirm VAT codes and account numbers in `config.yaml`.** The defaults are
-  Swiss-typical placeholders, not your account. Bexio VAT codes vary per account.
-- Bexio's own invoice import caps at ~200 rows per file; split large order sets.
-- The invoice output uses a generic *parent + positions* layout. If you import
-  via a specific tool/template, you may need to rename the header columns to
-  match it — all mapping is centralised in `orders.py` / `config.yaml`.
-- Real store data in `input/` and `output/` is git-ignored by default.
-```
+- **Manual round trip.** No API sync, no webhooks; every migration is
+  export → run → import.
+- **VAT codes and account numbers** in the defaults are Swiss-typical
+  placeholders. Bexio VAT codes vary per account, so check them.
+- **Bexio's invoice import caps at ~200 rows per file.** The tool does not split
+  output; split large order sets yourself.
+- **Invoice columns are a generic layout.** Depending on the Bexio import
+  template, header names may need adjusting. All mapping lives in `orders.py`
+  and `config.yaml`.
+- Shopify payout exports are not processed.
+
+## Possible next step
+
+Turning this into a real integration would mean a Shopify app / webhook that
+creates Bexio contacts, invoices and payments through the Bexio API on each new
+order. The field mapping here is reusable for that.
+
+## License
+
+MIT

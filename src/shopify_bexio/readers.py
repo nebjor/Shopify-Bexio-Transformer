@@ -12,7 +12,6 @@ SIGNATURES = {
     "products": {"Handle", "Title", "Variant Price"},
     "orders": {"Name", "Financial Status", "Lineitem name"},
     "transactions": {"Transaction ID", "Kind", "Amount"},
-    "payouts": {"Payout Date", "Type", "Amount"},
 }
 
 

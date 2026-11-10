@@ -36,7 +36,7 @@ def run(config_path: str | None = None) -> int:
     inputs = find_inputs(str(input_dir), cfg["files"])
     if not inputs:
         print(f"! No recognised Shopify exports in {input_dir}")
-        print("  Expected products / orders / transactions / payouts CSVs.")
+        print("  Expected products / orders / transactions CSVs.")
         return 1
 
     print(f"Reading from : {input_dir}")

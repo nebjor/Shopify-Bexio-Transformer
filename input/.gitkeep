@@ -2,4 +2,3 @@
 #   - products_export.csv       (Products > Export)
 #   - orders_export.csv         (Orders > Export, include line items)
 #   - transactions_export.csv   (Orders > Export transaction histories)  [optional]
-#   - payouts.csv               (Settings > Payments > Payouts > Export)  [optional]

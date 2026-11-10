@@ -14,7 +14,6 @@ DEFAULTS: dict[str, Any] = {
         "products": "products_export*.csv",
         "orders": "orders_export*.csv",
         "transactions": "transactions_export*.csv",
-        "payouts": "payouts*.csv",
     },
     "accounting": {
         "income_account": "3200",
